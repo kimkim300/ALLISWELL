@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔐 로그인 - ALL IS WELL</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-header {
+            margin-bottom: 30px;
+        }
+
+        .login-header h1 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .login-header p {
+            color: #666;
+            font-size: 1rem;
+            margin: 0;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .login-submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .login-submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .login-submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .guest-btn {
+            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .guest-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(149, 165, 166, 0.3);
+        }
+
+        .login-links {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid #e1e5e9;
+        }
+
+        .login-links a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .login-links a:hover {
+            color: #5a6fd8;
+            text-decoration: underline;
+        }
+
+        .back-to-app {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e1e5e9;
+        }
+
+        .back-to-app a {
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .back-to-app a:hover {
+            color: #333;
+        }
+
+        .demo-credentials {
+            background: #f8f9fa;
+            border: 1px solid #e1e5e9;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .demo-credentials h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .demo-credentials p {
+            margin: 5px 0;
+        }
+
+        /* 비밀번호 찾기 모달 스타일 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 0;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px 30px 20px;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-description {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .forgot-password-submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .forgot-password-submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .forgot-password-submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .forgot-password-submit-btn.sending {
+            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+        }
+
+        .forgot-password-submit-btn.success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
+        .login-submit-btn.success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
+        .login-submit-btn.success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                margin: 20px;
+                padding: 30px 20px;
+            }
+
+            .login-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .form-actions {
+                gap: 12px;
+            }
+
+            .login-links {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+
+            .modal-content {
+                margin: 20px;
+                width: calc(100% - 40px);
+            }
+
+            .modal-header {
+                padding: 20px 25px 15px;
+            }
+
+            .modal-body {
+                padding: 25px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <h1>🌱 ALL IS WELL</h1>
+            <p>할일 관리 앱에 오신 것을 환영합니다!</p>
+        </div>
+
+        <form class="login-form" id="loginForm">
+            <div class="form-group">
+                <label for="loginUsername">👤 아이디</label>
+                <input type="text" id="loginUsername" placeholder="아이디를 입력하세요" required>
+            </div>
+
+            <div class="form-group">
+                <label for="loginPassword">🔒 비밀번호</label>
+                <input type="password" id="loginPassword" placeholder="비밀번호를 입력하세요" required>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" id="loginSubmitBtn" class="login-submit-btn">
+                    🚀 로그인
+                </button>
+                <button type="button" id="loginGuestBtn" class="guest-btn">
+                    👤 게스트로 계속하기
+                </button>
+            </div>
+        </form>
+
+        <div class="login-links">
+            <a href="#" id="forgotPasswordLink">🔑 비밀번호 찾기</a>
+            <a href="signup.html" id="signupLink">📝 회원가입</a>
+        </div>
+
+        <!-- 비밀번호 찾기 모달 -->
+        <div id="forgotPasswordModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>🔑 비밀번호 찾기</h3>
+                    <button class="close-btn" id="closeForgotPasswordModal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p class="modal-description">
+                        가입 시 사용한 아이디와 이메일을 입력하시면<br>
+                        임시 비밀번호를 이메일로 발송해드립니다.
+                    </p>
+                    <form id="forgotPasswordForm">
+                        <div class="form-group">
+                            <label for="forgotUsername">👤 아이디</label>
+                            <input type="text" id="forgotUsername" placeholder="아이디를 입력하세요" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="forgotEmail">📧 이메일</label>
+                            <input type="email" id="forgotEmail" placeholder="가입 시 사용한 이메일을 입력하세요" required>
+                        </div>
+                        <button type="submit" id="forgotPasswordSubmitBtn" class="forgot-password-submit-btn">
+                            🔑 임시 비밀번호 발송
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="back-to-app">
+            <a href="index.html">← 메인 앱으로 돌아가기</a>
+        </div>
+
+        <div class="demo-credentials">
+            <h4>💡 데모 계정 (테스트용)</h4>
+            <p><strong>아이디:</strong> demo</p>
+            <p><strong>비밀번호:</strong> password123</p>
+            <p><small>실제 서비스에서는 Firebase Auth를 사용합니다.</small></p>
+        </div>
+    </div>
+
+    <script type="module">
+        // Firebase SDK 가져오기
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+        import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+        
+        // Firebase 설정
+        const firebaseConfig = {
+            apiKey: "AIzaSyAf_G73VSdOrcySo-kDZYHAEJzMV-f_SZk",
+            authDomain: "alliswell-backend.firebaseapp.com",
+            projectId: "alliswell-backend",
+            storageBucket: "alliswell-backend.firebasestorage.app",
+            messagingSenderId: "111695162731",
+            appId: "1:111695162731:web:51b50c36cf6ab3ef55302e",
+            measurementId: "G-99YL7GDMHM",
+            databaseURL: "https://alliswell-backend-default-rtdb.asia-southeast1.firebasedatabase.app/"
+        };
+        
+        // Firebase 초기화
+        let app, database;
+        try {
+            app = initializeApp(firebaseConfig);
+            database = getDatabase(app);
+            console.log('Firebase 초기화 성공');
+        } catch (error) {
+            console.error('Firebase 초기화 실패:', error);
+        }
+
+        class LoginManager {
+            constructor() {
+                this.bindEvents();
+                this.checkExistingLogin();
+            }
+
+            bindEvents() {
+                const loginForm = document.getElementById('loginForm');
+                const loginGuestBtn = document.getElementById('loginGuestBtn');
+                const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+                const signupLink = document.getElementById('signupLink');
+                const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+                const closeForgotPasswordModal = document.getElementById('closeForgotPasswordModal');
+
+                loginForm.addEventListener('submit', (e) => this.handleLogin(e));
+                loginGuestBtn.addEventListener('click', () => this.handleGuestLogin());
+                forgotPasswordLink.addEventListener('click', (e) => this.handleForgotPassword(e));
+                signupLink.addEventListener('click', (e) => this.handleSignup(e));
+                forgotPasswordForm.addEventListener('submit', (e) => this.handleForgotPasswordSubmit(e));
+                closeForgotPasswordModal.addEventListener('click', () => this.hideForgotPasswordModal());
+
+                // 모달 외부 클릭 시 닫기
+                document.getElementById('forgotPasswordModal').addEventListener('click', (e) => {
+                    if (e.target.id === 'forgotPasswordModal') {
+                        this.hideForgotPasswordModal();
+                    }
+                });
+            }
+
+            checkExistingLogin() {
+                // 자동 리다이렉트 제거 - 사용자가 명시적으로 로그인하려고 할 때는 허용
+                // const isLoggedIn = localStorage.getItem('isLoggedIn');
+                // const isGuestMode = localStorage.getItem('isGuestMode');
+                
+                // if (isLoggedIn === 'true' || isGuestMode === 'true') {
+                //     // 이미 로그인되어 있으면 메인 앱으로 리다이렉트
+                //     window.location.href = 'index.html';
+                // }
+            }
+
+            handleLogin(e) {
+                e.preventDefault();
+                
+                const username = document.getElementById('loginUsername').value.trim();
+                const password = document.getElementById('loginPassword').value.trim();
+
+                if (!username) {
+                    alert('아이디를 입력해주세요.');
+                    document.getElementById('loginUsername').focus();
+                    return;
+                }
+
+                if (!password) {
+                    alert('비밀번호를 입력해주세요.');
+                    document.getElementById('loginPassword').focus();
+                    return;
+                }
+
+                // 실제 로그인 검증
+                this.verifyLogin(username, password);
+            }
+
+            async verifyLogin(username, password) {
+                const submitBtn = document.getElementById('loginSubmitBtn');
+                const originalText = submitBtn.textContent;
+                
+                submitBtn.textContent = '🔄 로그인 확인 중...';
+                submitBtn.disabled = true;
+
+                try {
+                    // Firebase에서 사용자 정보 확인
+                    if (database) {
+                        const userRef = ref(database, 'users/' + username);
+                        const snapshot = await get(userRef);
+                        
+                        if (snapshot.exists()) {
+                            const userData = snapshot.val();
+                            
+                            // 비밀번호 확인 (Firebase에 저장된 비밀번호 또는 임시 비밀번호)
+                            if (this.verifyPassword(password, userData)) {
+                                // 로그인 성공
+                                submitBtn.textContent = '✅ 로그인 성공!';
+                                submitBtn.classList.add('success');
+                                
+                                setTimeout(async () => {
+                                    await this.loginSuccess(username);
+                                }, 1000);
+                            } else {
+                                throw new Error('비밀번호가 일치하지 않습니다.');
+                            }
+                        } else {
+                            throw new Error('가입되지 않은 아이디입니다.');
+                        }
+                    } else {
+                        // Firebase가 없는 경우 localStorage에서 확인
+                        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                        
+                        if (userData[username]) {
+                            // 비밀번호 확인
+                            if (this.verifyPassword(password, userData[username])) {
+                                // 로그인 성공
+                                submitBtn.textContent = '✅ 로그인 성공!';
+                                submitBtn.classList.add('success');
+                                
+                                setTimeout(async () => {
+                                    await this.loginSuccess(username);
+                                }, 1000);
+                            } else {
+                                throw new Error('비밀번호가 일치하지 않습니다.');
+                            }
+                        } else {
+                            throw new Error('가입되지 않은 아이디입니다.');
+                        }
+                    }
+                    
+                } catch (error) {
+                    console.error('로그인 검증 오류:', error);
+                    
+                    // 오류 메시지 표시
+                    alert(`로그인 실패:\n\n${error.message}\n\n다시 확인해주세요.`);
+                    
+                    // 버튼 상태 복원
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('success');
+                }
+            }
+
+            verifyPassword(inputPassword, userData) {
+                // 1. 일반 비밀번호 확인
+                if (userData.password && userData.password === inputPassword) {
+                    return true;
+                }
+                
+                // 2. 임시 비밀번호 확인 (24시간 이내)
+                if (userData.tempPassword && userData.tempPasswordExpiry) {
+                    const now = new Date();
+                    const expiry = new Date(userData.tempPasswordExpiry);
+                    
+                    if (now < expiry && userData.tempPassword === inputPassword) {
+                        return true;
+                    }
+                }
+                
+                // 3. 데모 계정 확인
+                if (userData.username === 'demo' && inputPassword === 'password123') {
+                    return true;
+                }
+                
+                return false;
+            }
+
+                                    async loginSuccess(username) {
+                            // 로그인 상태 저장
+                            localStorage.setItem('isLoggedIn', 'true');
+                            localStorage.setItem('username', username);
+                            localStorage.removeItem('isGuestMode');
+                            
+                            // Firebase에서 사용자 정보 가져오기
+                            let userDisplayName = username; // 기본값
+                            
+                            if (database) {
+                                try {
+                                    const userRef = ref(database, 'users/' + username);
+                                    const snapshot = await get(userRef);
+                                    
+                                    if (snapshot.exists()) {
+                                        const userData = snapshot.val();
+                                        console.log('Firebase에서 가져온 사용자 데이터:', userData);
+                                        console.log('userData.name 값:', userData.name);
+                                        console.log('userData.name 타입:', typeof userData.name);
+                                        console.log('userData.name 길이:', userData.name ? userData.name.length : 'undefined');
+                                        
+                                        if (userData.name && userData.name.trim() !== '') {
+                                            userDisplayName = userData.name.trim();
+                                            console.log('Firebase에서 사용자 이름 가져옴:', userDisplayName);
+                                        } else {
+                                            console.log('Firebase에 사용자 이름이 없거나 빈 문자열');
+                                            console.log('userData 전체 구조:', JSON.stringify(userData, null, 2));
+                                            
+                                            // Firebase에 name이 없는 경우, localStorage에서 확인
+                                            const localUserData = JSON.parse(localStorage.getItem('userData') || '{}');
+                                            if (localUserData[username] && localUserData[username].name) {
+                                                userDisplayName = localUserData[username].name;
+                                                console.log('localStorage에서 사용자 이름 가져옴 (Firebase에 name이 없는 경우):', userDisplayName);
+                                                
+                                                // Firebase 데이터 업데이트
+                                                try {
+                                                    await set(ref(database, 'users/' + username), {
+                                                        ...userData,
+                                                        name: localUserData[username].name
+                                                    });
+                                                    console.log('Firebase 데이터에 name 필드 추가 완료');
+                                                } catch (updateError) {
+                                                    console.error('Firebase 데이터 업데이트 실패:', updateError);
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        console.log('Firebase에 사용자 정보가 없음, localStorage에서 확인');
+                                        // Firebase에 사용자 정보가 없는 경우, localStorage에서 가져와서 Firebase에 저장
+                                        const localUserData = JSON.parse(localStorage.getItem('userData') || '{}');
+                                        console.log('localStorage의 전체 사용자 데이터:', localUserData);
+                                        console.log('현재 username에 해당하는 데이터:', localUserData[username]);
+                                        
+                                        if (localUserData[username] && localUserData[username].name) {
+                                            userDisplayName = localUserData[username].name;
+                                            console.log('localStorage에서 사용자 이름 가져옴:', userDisplayName);
+                                            
+                                            // Firebase에 사용자 정보 저장 (이후 로그인 시 Firebase에서 가져올 수 있도록)
+                                            try {
+                                                await set(ref(database, 'users/' + username), {
+                                                    name: localUserData[username].name,
+                                                    username: username,
+                                                    email: localUserData[username].email || '',
+                                                    createdAt: localUserData[username].createdAt || new Date().toISOString(),
+                                                    lastLogin: new Date().toISOString()
+                                                });
+                                                console.log('이전 계정 정보를 Firebase에 저장했습니다.');
+                                            } catch (saveError) {
+                                                console.error('Firebase에 이전 계정 정보 저장 실패:', saveError);
+                                            }
+                                        } else {
+                                            console.log('localStorage에도 사용자 이름이 없음');
+                                        }
+                                    }
+                                } catch (error) {
+                                    console.error('Firebase에서 사용자 정보 가져오기 실패:', error);
+                                    // Firebase 실패 시 localStorage에서 가져오기
+                                    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                                    if (userData[username] && userData[username].name) {
+                                        userDisplayName = userData[username].name;
+                                    }
+                                }
+                            } else {
+                                // Firebase가 없는 경우 localStorage에서 가져오기
+                                const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                                if (userData[username] && userData[username].name) {
+                                    userDisplayName = userData[username].name;
+                                }
+                            }
+                            
+                            // 사용자 이름을 localStorage에 저장
+                            localStorage.setItem('userDisplayName', userDisplayName);
+                            console.log('최종 사용자 이름 설정:', userDisplayName);
+                            console.log('localStorage에 저장된 userDisplayName:', localStorage.getItem('userDisplayName'));
+                            
+                            // 환영 메시지를 위한 플래그 설정
+                            localStorage.setItem('showWelcomeMessage', 'true');
+                            localStorage.setItem('welcomeUsername', username);
+            
+                            // 성공 메시지
+                            alert(`환영합니다, ${userDisplayName}님! 🎉\n\n메인 앱으로 이동합니다.`);
+            
+                            // 메인 앱으로 리다이렉트
+                            window.location.href = 'index.html';
+                        }
+
+            handleGuestLogin() {
+                if (confirm('게스트 모드로 계속하시겠습니까?\n\n게스트 모드에서는:\n• 데이터가 로컬에만 저장됩니다\n• 다른 기기와 동기화되지 않습니다\n• 로그아웃 시 데이터가 삭제될 수 있습니다')) {
+                    this.guestLogin();
+                }
+            }
+
+            guestLogin() {
+                localStorage.setItem('isGuestMode', 'true');
+                localStorage.setItem('isLoggedIn', 'false');
+                localStorage.removeItem('username');
+
+                alert('게스트 모드로 시작합니다! 📝\n\n모든 데이터는 이 기기에만 저장됩니다.');
+
+                // 메인 앱으로 리다이렉트
+                window.location.href = 'index.html';
+            }
+
+            handleForgotPassword(e) {
+                e.preventDefault();
+                this.showForgotPasswordModal();
+            }
+
+            showForgotPasswordModal() {
+                const modal = document.getElementById('forgotPasswordModal');
+                modal.classList.add('show');
+                
+                // 입력 필드 초기화
+                document.getElementById('forgotUsername').value = '';
+                document.getElementById('forgotEmail').value = '';
+                
+                // 첫 번째 입력 필드에 포커스
+                document.getElementById('forgotUsername').focus();
+            }
+
+            hideForgotPasswordModal() {
+                const modal = document.getElementById('forgotPasswordModal');
+                modal.classList.remove('show');
+            }
+
+            async handleForgotPasswordSubmit(e) {
+                e.preventDefault();
+                
+                const username = document.getElementById('forgotUsername').value.trim();
+                const email = document.getElementById('forgotEmail').value.trim();
+
+                if (!username) {
+                    alert('아이디를 입력해주세요.');
+                    document.getElementById('forgotUsername').focus();
+                    return;
+                }
+
+                if (!email) {
+                    alert('이메일을 입력해주세요.');
+                    document.getElementById('forgotEmail').focus();
+                    return;
+                }
+
+                // 이메일 형식 검증
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    alert('올바른 이메일 형식을 입력해주세요.');
+                    document.getElementById('forgotEmail').focus();
+                    return;
+                }
+
+                // 비밀번호 찾기 처리
+                await this.processForgotPassword(username, email);
+            }
+
+            async processForgotPassword(username, email) {
+                const submitBtn = document.getElementById('forgotPasswordSubmitBtn');
+                const originalText = submitBtn.textContent;
+                
+                // 버튼 상태 변경
+                submitBtn.textContent = '🔄 처리 중...';
+                submitBtn.disabled = true;
+                submitBtn.classList.add('sending');
+
+                try {
+                    // Firebase에서 사용자 정보 확인
+                    if (database) {
+                        const userRef = ref(database, 'users/' + username);
+                        const snapshot = await get(userRef);
+                        
+                        if (snapshot.exists()) {
+                            const userData = snapshot.val();
+                            
+                            // 이메일 일치 확인
+                            if (userData.email && userData.email.toLowerCase() === email.toLowerCase()) {
+                                // 임시 비밀번호 생성
+                                const tempPassword = this.generateTempPassword();
+                                
+                                // Firebase에 임시 비밀번호 저장
+                                await set(ref(database, 'users/' + username), {
+                                    ...userData,
+                                    tempPassword: tempPassword,
+                                    tempPasswordExpiry: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24시간 유효
+                                });
+
+                                // 성공 처리
+                                submitBtn.textContent = '✅ 발송 완료!';
+                                submitBtn.classList.remove('sending');
+                                submitBtn.classList.add('success');
+                                
+                                setTimeout(() => {
+                                    alert(`임시 비밀번호가 생성되었습니다!\n\n🔑 임시 비밀번호: ${tempPassword}\n\n⚠️ 주의사항:\n• 이 비밀번호는 24시간 동안만 유효합니다\n• 로그인 후 반드시 새 비밀번호로 변경해주세요\n• 보안을 위해 임시 비밀번호를 다른 사람과 공유하지 마세요`);
+                                    
+                                    // 모달 닫기
+                                    this.hideForgotPasswordModal();
+                                    
+                                    // 버튼 상태 복원
+                                    setTimeout(() => {
+                                        submitBtn.textContent = originalText;
+                                        submitBtn.disabled = false;
+                                        submitBtn.classList.remove('success');
+                                    }, 1000);
+                                }, 1500);
+                                
+                            } else {
+                                throw new Error('입력한 이메일이 가입 정보와 일치하지 않습니다.');
+                            }
+                        } else {
+                            throw new Error('해당 아이디로 가입된 계정을 찾을 수 없습니다.');
+                        }
+                    } else {
+                        // Firebase가 없는 경우 localStorage에서 확인
+                        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                        
+                        if (userData[username] && userData[username].email === email) {
+                            // 임시 비밀번호 생성
+                            const tempPassword = this.generateTempPassword();
+                            
+                            // localStorage에 임시 비밀번호 저장
+                            userData[username].tempPassword = tempPassword;
+                            userData[username].tempPasswordExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+                            localStorage.setItem('userData', JSON.stringify(userData));
+
+                            // 성공 처리
+                            submitBtn.textContent = '✅ 발송 완료!';
+                            submitBtn.classList.remove('sending');
+                            submitBtn.classList.add('success');
+                            
+                            setTimeout(() => {
+                                alert(`임시 비밀번호가 생성되었습니다!\n\n🔑 임시 비밀번호: ${tempPassword}\n\n⚠️ 주의사항:\n• 이 비밀번호는 24시간 동안만 유효합니다\n• 로그인 후 반드시 새 비밀번호로 변경해주세요\n• 보안을 위해 임시 비밀번호를 다른 사람과 공유하지 마세요`);
+                                
+                                // 모달 닫기
+                                this.hideForgotPasswordModal();
+                                
+                                // 버튼 상태 복원
+                                setTimeout(() => {
+                                    submitBtn.textContent = originalText;
+                                    submitBtn.disabled = false;
+                                    submitBtn.classList.remove('success');
+                                }, 1000);
+                            }, 1500);
+                            
+                        } else {
+                            throw new Error('입력한 정보와 일치하는 계정을 찾을 수 없습니다.');
+                        }
+                    }
+                    
+                } catch (error) {
+                    console.error('비밀번호 찾기 오류:', error);
+                    
+                    // 오류 메시지 표시
+                    alert(`비밀번호 찾기 실패:\n\n${error.message}\n\n다시 확인해주세요.`);
+                    
+                    // 버튼 상태 복원
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('sending');
+                }
+            }
+
+            generateTempPassword() {
+                // 8자리 임시 비밀번호 생성 (숫자 + 대문자)
+                const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                let result = '';
+                for (let i = 0; i < 8; i++) {
+                    result += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                return result;
+            }
+
+            handleSignup(e) {
+                // 회원가입 페이지로 이동
+                window.location.href = 'signup.html';
+            }
+        }
+
+        // 로그인 매니저 초기화
+        const loginManager = new LoginManager();
+
+        // 페이지 로드 시 첫 번째 입력 필드에 포커스
+        window.addEventListener('load', () => {
+            document.getElementById('loginUsername').focus();
+        });
+    </script>
+</body>
+</html>
