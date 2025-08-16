@@ -451,12 +451,10 @@ header h1 {
 }
 
 .memo-category.건강 { background: #28a745; }
-.memo-category.경제공부 { background: #ffc107; }
-.memo-category.AI공부 { background: #6f42c1; }
+.memo-category.공부 { background: #6f42c1; }
 .memo-category.약속 { background: #fd7e14; }
 .memo-category.집안일 { background: #e83e8c; }
 .memo-category.기타 { background: #6c757d; }
-.memo-category.자기개발 { background: #17a2b8; }
 
 .memo-time {
     display: inline-block;
