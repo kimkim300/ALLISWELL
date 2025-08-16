@@ -8,17 +8,46 @@ class MemoApp {
         this.selectedDate = new Date();
         this.isImportant = false;
         this.init();
+        
+        // 기존 카테고리 초기화 (한 번만 실행)
+        this.initializeCategories();
+    }
+
+    // 기존 카테고리를 새로운 5개 카테고리로 초기화
+    initializeCategories() {
+        const categoriesVersion = localStorage.getItem('categoriesVersion');
+        if (!categoriesVersion || categoriesVersion !== '2.0') {
+            // 기존 카테고리 데이터 완전 삭제
+            localStorage.removeItem('categories');
+            
+            // 새로운 카테고리 설정
+            this.categories = this.getDefaultCategories();
+            this.saveCategories();
+            
+            // 버전 정보 저장
+            localStorage.setItem('categoriesVersion', '2.0');
+            
+            // 기존 메모들의 카테고리를 '기타'로 변경
+            this.memos.forEach(memo => {
+                if (!['건강', '공부', '약속', '집안일', '기타'].includes(memo.category)) {
+                    memo.category = '기타';
+                }
+            });
+            this.saveMemos();
+            
+            // UI 업데이트
+            this.renderCategories();
+            this.renderMemos();
+        }
     }
 
     getDefaultCategories() {
         return [
             { name: '건강', emoji: '🏃‍♀️', color: '#28a745' },
-            { name: '경제공부', emoji: '💰', color: '#ffc107' },
-            { name: 'AI 공부', emoji: '🤖', color: '#6f42c1' },
+            { name: '공부', emoji: '📚', color: '#6f42c1' },
             { name: '약속', emoji: '📅', color: '#fd7e14' },
             { name: '집안일', emoji: '🏠', color: '#e83e8c' },
-            { name: '기타', emoji: '📝', color: '#6c757d' },
-            { name: '자기개발', emoji: '🚀', color: '#17a2b8' }
+            { name: '기타', emoji: '📝', color: '#6c757d' }
         ];
     }
 
