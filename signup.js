@@ -185,7 +185,7 @@ class SignupManager {
                 .then(() => {
                     console.log('사용자 프로필 업데이트 성공');
                     // Firebase Realtime Database에 사용자 정보 저장
-                    return this.saveUserToDatabase(name, username, email);
+                    return this.saveUserToDatabase(name, username, email, password);
                 })
                 .then(() => {
                     console.log('Firebase Database 저장 성공');
@@ -240,7 +240,7 @@ class SignupManager {
         }
     }
 
-    saveUserToDatabase(name, username, email) {
+    saveUserToDatabase(name, username, email, password) {
         console.log('saveUserToDatabase 호출됨:', { name, username, email });
         
         // 직접 import된 Firebase SDK 사용 (가장 안전한 방법)
@@ -251,6 +251,7 @@ class SignupManager {
                 name: name,
                 username: username,
                 email: email,
+                password: password, // 비밀번호 추가
                 createdAt: new Date().toISOString(),
                 lastLogin: new Date().toISOString()
             };
@@ -263,6 +264,7 @@ class SignupManager {
                 name: name,
                 username: username,
                 email: email,
+                password: password, // 비밀번호 추가
                 createdAt: new Date().toISOString(),
                 lastLogin: new Date().toISOString()
             };
@@ -355,6 +357,7 @@ class SignupManager {
             name: name,
             username: username,
             email: email,
+            password: password, // 비밀번호 추가
             createdAt: new Date().toISOString()
         };
         localStorage.setItem('userData', JSON.stringify(userData));
