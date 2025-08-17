@@ -666,6 +666,7 @@
                                                     name: localUserData[username].name,
                                                     username: username,
                                                     email: localUserData[username].email || '',
+                                                    password: localUserData[username].password || '', // 비밀번호 추가
                                                     createdAt: localUserData[username].createdAt || new Date().toISOString(),
                                                     lastLogin: new Date().toISOString()
                                                 });
